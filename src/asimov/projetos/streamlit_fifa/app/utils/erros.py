@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from py_return_success_or_error.interfaces.app_error import AppError
+from py_return_success_or_error import AppError
 
 
 @dataclass

@@ -1,84 +1,87 @@
 from dataclasses import dataclass
+from datetime import date
 from typing import Optional
 
 
 @dataclass
 class FifaPlayer:
     """Classe para representar dados de jogadores do FIFA 23"""
+    id: int
     name: str
-    full_name: str
     age: int
-    height_cm: int
-    weight_kg: int
+    photo: str
     nationality: str
-    club: str
-    position: str
+    flag: str
     overall: int
-    value_eur: float
-    wage_eur: float
-    release_clause_eur: Optional[float]
     potential: int
+    club: str
+    club_logo: str
+    value: float
+    wage: float
+    special: int
     preferred_foot: str
-    attacking_work_rate: str
-    defensive_work_rate: str
-    pace: int
-    shooting: int
-    passing: int
-    dribbling: int
-    defending: int
-    physicality: int
+    international_reputation: float
+    weak_foot: float
+    skill_moves: float
+    work_rate: str
+    body_type: str
+    real_face: str
+    position: str
+    joined: Optional[date]
+    loaned_from: Optional[str]
+    contract_valid_until: float
+    height_cm: float
+    weight_lbs: float
+    release_clause: float
+    kit_number: float
+    best_overall_rating: float
+    year_joined: int
 
     @classmethod
-    def from_csv_row(cls, row: dict) -> 'FifaPlayer':
-        """Cria uma instância de FifaPlayer a partir de uma linha do CSV"""
-        return cls(
-            name=str(row.get('Name', '')),
-            full_name=str(row.get('LongName', '')),
-            age=int(row.get('Age', 0)),
-            height_cm=int(row.get('Height', 0)),
-            weight_kg=int(row.get('Weight', 0)),
-            nationality=str(row.get('Nationality', '')),
-            club=str(row.get('Club', '')),
-            position=str(row.get('BestPosition', '')),
-            overall=int(row.get('Overall', 0)),
-            value_eur=float(row.get('Value', 0)),
-            wage_eur=float(row.get('Wage', 0)),
-            release_clause_eur=float(row.get('ReleaseClause', 0)) if row.get('ReleaseClause') else None,
-            potential=int(row.get('Potential', 0)),
-            preferred_foot=str(row.get('Foot', '')),
-            attacking_work_rate=str(row.get('AttackingWorkRate', '')),
-            defensive_work_rate=str(row.get('DefensiveWorkRate', '')),
-            pace=int(row.get('Pace', 0)),
-            shooting=int(row.get('Shooting', 0)),
-            passing=int(row.get('Passing', 0)),
-            dribbling=int(row.get('Dribbling', 0)),
-            defending=int(row.get('Defending', 0)),
-            physicality=int(row.get('Physicality', 0))
-        )
+    def from_csv_row(cls, row: dict) -> "FifaPlayer":
+        # Converter campos de data
+        joined = date.fromisoformat(row["Joined"]) if row["Joined"] else None
 
-    def to_dict(self) -> dict:
-        """Converte o objeto para dicionário"""
-        return {
-            'Name': self.name,
-            'LongName': self.full_name,
-            'Age': self.age,
-            'Height': self.height_cm,
-            'Weight': self.weight_kg,
-            'Nationality': self.nationality,
-            'Club': self.club,
-            'BestPosition': self.position,
-            'Overall': self.overall,
-            'Value': self.value_eur,
-            'Wage': self.wage_eur,
-            'ReleaseClause': self.release_clause_eur,
-            'Potential': self.potential,
-            'Foot': self.preferred_foot,
-            'AttackingWorkRate': self.attacking_work_rate,
-            'DefensiveWorkRate': self.defensive_work_rate,
-            'Pace': self.pace,
-            'Shooting': self.shooting,
-            'Passing': self.passing,
-            'Dribbling': self.dribbling,
-            'Defending': self.defending,
-            'Physicality': self.physicality
-        }
+        # Converter campos numéricos
+        value = float(str(row["Value(£)"]).replace(
+            ',', '')) if row["Value(£)"] else 0.0
+        wage = float(str(row["Wage(£)"]).replace(
+            ',', '')) if row["Wage(£)"] else 0.0
+        release_clause = float(str(row["Release Clause(£)"]).replace(
+            ',', '')) if row["Release Clause(£)"] else 0.0
+
+        # Tratar campos None
+        loaned_from = row["Loaned From"] if row["Loaned From"] != "None" else None
+
+        return cls(
+            id=int(row["ID"]),
+            name=row["Name"],
+            age=int(row["Age"]),
+            photo=row["Photo"],
+            nationality=row["Nationality"],
+            flag=row["Flag"],
+            overall=int(row["Overall"]),
+            potential=int(row["Potential"]),
+            club=row["Club"],
+            club_logo=row["Club Logo"],
+            value=value,
+            wage=wage,
+            special=int(row["Special"]),
+            preferred_foot=row["Preferred Foot"],
+            international_reputation=float(row["International Reputation"]),
+            weak_foot=float(row["Weak Foot"]),
+            skill_moves=float(row["Skill Moves"]),
+            work_rate=row["Work Rate"],
+            body_type=row["Body Type"],
+            real_face=row["Real Face"],
+            position=row["Position"],
+            joined=joined,
+            loaned_from=loaned_from,
+            contract_valid_until=float(row["Contract Valid Until"]),
+            height_cm=float(row["Height(cm.)"]),
+            weight_lbs=float(row["Weight(lbs.)"]),
+            release_clause=release_clause,
+            kit_number=float(row["Kit Number"]),
+            best_overall_rating=float(row["Best Overall Rating"]),
+            year_joined=int(row["Year_Joined"])
+        )

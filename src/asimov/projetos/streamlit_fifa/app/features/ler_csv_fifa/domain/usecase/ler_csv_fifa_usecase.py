@@ -16,5 +16,7 @@ class LerCsvFifaUseCase(LCFUsecase):
         """Carrega um arquivo CSV com dados de jogadores do FIFA 23"""
         result = self._resultDatasource(
             parameters=parameters, datasource=self._datasource)
-
+        print()
+        print('LerCsvFifaUseCase**********')
+        print(result)
         return result
