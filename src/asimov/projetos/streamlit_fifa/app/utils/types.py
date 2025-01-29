@@ -10,7 +10,7 @@ from asimov.projetos.streamlit_fifa.app.features.ler_csv_fifa.domain.models.fifa
 from asimov.projetos.streamlit_fifa.app.utils.parameters import LoadCsvParameters
 
 LCFUsecase: TypeAlias = UsecaseBaseCallData[
-    List[FifaPlayer],
+    List[dict],
     List[FifaPlayer],
     LoadCsvParameters
 ]

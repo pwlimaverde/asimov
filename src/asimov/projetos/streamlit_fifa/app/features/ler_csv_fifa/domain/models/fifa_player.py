@@ -40,7 +40,12 @@ class FifaPlayer:
     @classmethod
     def from_csv_row(cls, row: dict) -> "FifaPlayer":
         # Converter campos de data
-        joined = date.fromisoformat(row["Joined"]) if row["Joined"] else None
+        joined = None
+        if row["Joined"]:
+            try:
+                joined = date.fromisoformat(row["Joined"])
+            except ValueError:
+                print(f"Erro ao converter data: {row['Joined']}")
 
         # Converter campos numéricos
         value = float(str(row["Value(£)"]).replace(
@@ -85,3 +90,37 @@ class FifaPlayer:
             best_overall_rating=float(row["Best Overall Rating"]),
             year_joined=int(row["Year_Joined"])
         )
+
+    def to_dict(self) -> dict:
+        return {
+            'id': self.id,
+            'name': self.name,
+            'age': self.age,
+            'photo': self.photo,
+            'nationality': self.nationality,
+            'flag': self.flag,
+            'overall': self.overall,
+            'potential': self.potential,
+            'club': self.club,
+            'club_logo': self.club_logo,
+            'value': self.value,
+            'wage': self.wage,
+            'special': self.special,
+            'preferred_foot': self.preferred_foot,
+            'international_reputation': self.international_reputation,
+            'weak_foot': self.weak_foot,
+            'skill_moves': self.skill_moves,
+            'work_rate': self.work_rate,
+            'body_type': self.body_type,
+            'real_face': self.real_face,
+            'position': self.position,
+            'joined': self.joined.isoformat() if self.joined else None,
+            'loaned_from': self.loaned_from,
+            'contract_valid_until': self.contract_valid_until,
+            'height_cm': self.height_cm,
+            'weight_lbs': self.weight_lbs,
+            'release_clause': self.release_clause,
+            'kit_number': self.kit_number,
+            'best_overall_rating': self.best_overall_rating,
+            'year_joined': self.year_joined
+        }

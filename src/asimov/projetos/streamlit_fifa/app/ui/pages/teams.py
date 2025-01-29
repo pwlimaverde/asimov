@@ -4,8 +4,8 @@ import streamlit as st
 def teams():
     st.title("Teams")
 
+    df_data = st.session_state.data
+    st.dataframe(df_data)
 
-st.write(teams())
 
-df_data = st.session_state.data
-st.write(df_data)
+teams()

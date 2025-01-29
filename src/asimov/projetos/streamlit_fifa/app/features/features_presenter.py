@@ -8,8 +8,6 @@ from py_return_success_or_error import (
 
 from asimov.projetos.streamlit_fifa.app.features.ler_csv_fifa.datasource.load_csv_pandas_datasource import (
     LoadCsvPandasDatasource, )
-from asimov.projetos.streamlit_fifa.app.features.ler_csv_fifa.domain.models.fifa_player import (
-    FifaPlayer, )
 from asimov.projetos.streamlit_fifa.app.features.ler_csv_fifa.domain.usecase.ler_csv_fifa_usecase import (
     LerCsvFifaUseCase, )
 from asimov.projetos.streamlit_fifa.app.utils.erros import LoadCsvFifaError
@@ -18,7 +16,7 @@ from asimov.projetos.streamlit_fifa.app.utils.parameters import LoadCsvParameter
 
 class FeaturesPresenter:
 
-    def ler_csv_fifa(self, file_path: str) -> List[FifaPlayer]:
+    def ler_csv_fifa(self, file_path: str) -> List[dict]:
 
         path = Path(file_path)
         if not path.exists():
@@ -29,10 +27,11 @@ class FeaturesPresenter:
         dataSource = LoadCsvPandasDatasource()
         usecase = LerCsvFifaUseCase(dataSource)
 
-        data = usecase(parameters)
-        list_fifa_players: List[FifaPlayer] = []
+        data = usecase.runNewThread(parameters)
+        list_fifa_players: List[dict] = []
 
         if isinstance(data, SuccessReturn):
+
             list_fifa_players = data.result
 
         if isinstance(data, ErrorReturn):

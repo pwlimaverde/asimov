@@ -1,4 +1,5 @@
 
+from datetime import datetime
 from unittest.mock import Mock
 
 import pytest
@@ -16,13 +17,13 @@ from asimov.projetos.streamlit_fifa.app.utils.parameters import LoadCsvParameter
 def mock_fifa_players():
     return [
         FifaPlayer(
-            id=209658,
+            id=1,
             name="L. Goretzka",
             age=27,
             photo="https://cdn.sofifa.net/players/209/658/23_60.png",
             nationality="Germany",
             flag="https://cdn.sofifa.net/flags/de.png",
-            overall=87,
+            overall=75,
             potential=88,
             club="FC Bayern München",
             club_logo="https://cdn.sofifa.net/teams/21/30.png",
@@ -37,7 +38,7 @@ def mock_fifa_players():
             body_type="Unique",
             real_face="Yes",
             position="SUB",
-            joined="2018-07-01",
+            joined=datetime.strptime("2018-07-01", "%Y-%m-%d").date(),
             loaned_from="None",
             contract_valid_until=2026.0,
             height_cm=189.0,
@@ -48,7 +49,7 @@ def mock_fifa_players():
             year_joined=2018
         ),
         FifaPlayer(
-            id=212198,
+            id=2,
             name="Bruno Fernandes",
             age=27,
             photo="https://cdn.sofifa.net/players/212/198/23_60.png",
@@ -69,7 +70,7 @@ def mock_fifa_players():
             body_type="Unique",
             real_face="Yes",
             position="LCM",
-            joined="2020-01-30",
+            joined=datetime.strptime("2020-01-30", "%Y-%m-%d").date(),
             loaned_from="None",
             contract_valid_until=2026.0,
             height_cm=179.0,
@@ -80,7 +81,7 @@ def mock_fifa_players():
             year_joined=2020
         ),
         FifaPlayer(
-            id=192985,
+            id=3,
             name="K. De Bruyne",
             age=31,
             photo="https://cdn.sofifa.net/players/192/985/23_60.png",
@@ -101,7 +102,7 @@ def mock_fifa_players():
             body_type="Unique",
             real_face="Yes",
             position="RCM",
-            joined="2015-08-30",
+            joined=datetime.strptime("2015-08-30", "%Y-%m-%d").date(),
             loaned_from="None",
             contract_valid_until=2025.0,
             height_cm=181.0,
@@ -129,13 +130,12 @@ def test_ler_csv_fifa_usecase_success(mock_fifa_players):
     )
     # Act
     teste = usecase(parameters)
-
     # Assert
     assert isinstance(teste, SuccessReturn)
     assert len(teste.result) == 3
-    assert teste.result[0].name == "L. Goretzka"
-    assert teste.result[1].name == "Bruno Fernandes"
-    assert teste.result[2].name == "K. De Bruyne"
+    assert teste.result[0]['name'] == "K. De Bruyne"
+    assert teste.result[1]['name'] == "Bruno Fernandes"
+    assert teste.result[2]['name'] == "L. Goretzka"
     assert str(parameters) == "LoadCsvParameters(error=LoadCsvFifaError(message='Erro ao carregar o arquivo CSV'), file_path='test.csv')"
 
 
@@ -161,3 +161,29 @@ def test_ler_csv_fifa_usecase_error():
     assert teste.result.message == "Erro ao carregar o arquivo CSV"
     assert str(
         teste.result) == "LoadCsvFifaError - Erro ao carregar o arquivo CSV"
+
+
+def test_ler_csv_fifa_usecase_custom_exception():
+    # Arrange
+    error = LoadCsvFifaError()
+    parameters = LoadCsvParameters(
+        file_path="test.csv",
+        error=error
+    )
+
+    mock_result_datasource = Mock(
+        side_effect=Exception())
+
+    usecase = LerCsvFifaUseCase(
+        datasource=mock_result_datasource,
+    )
+
+    # Act
+    result = usecase(parameters)
+
+    # Assert
+    assert isinstance(result, ErrorReturn)
+    assert isinstance(result.result, LoadCsvFifaError)
+    assert result.result.message == "Erro ao carregar o arquivo CSV"
+    assert str(
+        result.result) == "LoadCsvFifaError - Erro ao carregar o arquivo CSV"
