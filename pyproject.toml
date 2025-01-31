@@ -1,6 +1,6 @@
 [project]
 name = "asimov"
-version = "0.21.0"
+version = "0.2.0"
 description = "Repositorio para estudo e projetos do curso Asimov"
 readme = "README.md"
 authors = [
