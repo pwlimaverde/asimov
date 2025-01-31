@@ -4,11 +4,12 @@ import streamlit as st
 
 st.markdown('# FIFA23 OFICIAL DATASET! :soccer:')
 
-botao = st.button('Acesse os daados no Kaggle')
+botao = st.button('Acesse os dados no Kaggle')
 
 if botao:
     we.open_new_tab(
-        'https://www.kaggle.com/datasets/kevwesophia/fifa23-official-datasetclean-data')
+        'https://www.kaggle.com/datasets/kevwesophia/fifa23-official-datasetclean-data'
+    )
 
 st.markdown(
     """

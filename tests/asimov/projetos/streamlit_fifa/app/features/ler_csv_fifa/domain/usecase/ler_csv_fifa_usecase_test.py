@@ -41,8 +41,8 @@ def mock_fifa_players():
             joined=datetime.strptime("2018-07-01", "%Y-%m-%d").date(),
             loaned_from="None",
             contract_valid_until=2026.0,
-            height_cm=189.0,
-            weight_lbs=180.81,
+            height_m=1.890,
+            weight_kg=(180.81 * 0.453),
             release_clause=157000000.0,
             kit_number=8.0,
             best_overall_rating=0.0,
@@ -73,8 +73,8 @@ def mock_fifa_players():
             joined=datetime.strptime("2020-01-30", "%Y-%m-%d").date(),
             loaned_from="None",
             contract_valid_until=2026.0,
-            height_cm=179.0,
-            weight_lbs=152.145,
+            height_m=.1790,
+            weight_kg=(152.145 * 0.453),
             release_clause=155000000.0,
             kit_number=8.0,
             best_overall_rating=0.0,
@@ -105,8 +105,8 @@ def mock_fifa_players():
             joined=datetime.strptime("2015-08-30", "%Y-%m-%d").date(),
             loaned_from="None",
             contract_valid_until=2025.0,
-            height_cm=181.0,
-            weight_lbs=154.35,
+            height_m=1.810,
+            weight_kg=(154.35 * 0.453),
             release_clause=198900000.0,
             kit_number=17.0,
             best_overall_rating=0.0,
@@ -163,7 +163,7 @@ def test_ler_csv_fifa_usecase_error():
         teste.result) == "LoadCsvFifaError - Erro ao carregar o arquivo CSV"
 
 
-def test_ler_csv_fifa_usecase_custom_exception():
+def test_ler_csv_fifa_usecase_custom_data_exception():
     # Arrange
     error = LoadCsvFifaError()
     parameters = LoadCsvParameters(
@@ -187,3 +187,24 @@ def test_ler_csv_fifa_usecase_custom_exception():
     assert result.result.message == "Erro ao carregar o arquivo CSV"
     assert str(
         result.result) == "LoadCsvFifaError - Erro ao carregar o arquivo CSV"
+
+
+def test_ler_csv_fifa_usecase_excecao(monkeypatch):
+    error = LoadCsvFifaError()
+    mock_result_datasource = Mock(
+        side_effect=Exception())
+    usecase = LerCsvFifaUseCase(datasource=mock_result_datasource)
+    parameters = LoadCsvParameters(
+        file_path="test.csv",
+        error=error
+    )
+
+    def mock_result(*args, **kwargs):
+        raise Exception("Erro simulado")
+
+    monkeypatch.setattr(usecase, '_resultDatasource', mock_result)
+
+    result = usecase(parameters)
+    assert isinstance(result, ErrorReturn)
+    assert isinstance(result.result, LoadCsvFifaError)
+    assert "Erro simulado" in str(result.result.message)

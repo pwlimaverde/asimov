@@ -8,6 +8,7 @@ from asimov.projetos.streamlit_fifa.app.features.features_presenter import (
 
 
 def main():
+    st.set_page_config(layout="wide")
     paginas = st.navigation(
         [
             st.Page(
